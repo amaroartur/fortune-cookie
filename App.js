@@ -1,31 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, Platform, StatusBar, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 function App() {
 
   const [isOpened, setIsOpened] = useState(false)
   const [randomNumber, setRandomNumber] = useState(null)
+  const [allPhrases, setAllPhrases] = useState([])
 
-  const allPhrases = [
-    "A vida trará coisas boas se tiver paciência.",
-    "Não compense na ira o que lhe falta na razão.",
-    "Defeitos e virtudes são apenas dois lados da mesma moeda.",
-    "A maior de todas as torres começa no solo.",
-    "Não há que ser forte. Há que ser flexível.",
-    "A juventude não é uma época da vida, é um estado de espírito",
-    "Siga os bons e aprenda com eles.",
-    "O bom-senso vale mais do que muito conhecimento.",
-    "Quem quer colher rosas tem de estar preparado para suportar os espinhos.",
-    "A adversidade é um espelho que reflete o verdadeiro eu.",
-    "Uma bela flor é incompleta sem as suas folhas."
-  ]
+  useEffect(() => {
+    (async () => {
+      await fetch('https://type.fit/api/quotes')
+        .then(res => res.json())
+        .then(res => setAllPhrases(res))
+        .catch(err => console.log(err))
+    })()
+  }, [])
 
   function openFortuneCookie() {
-    let aux
+    let generatedNumber
     do {
-      aux = Math.floor(Math.random() * allPhrases.length)
-    } while (aux === randomNumber)
-    setRandomNumber(aux)
+      generatedNumber = Math.floor(Math.random() * allPhrases.length)
+    } while (generatedNumber === randomNumber)
+    setRandomNumber(generatedNumber)
     setIsOpened(true)
   }
 
@@ -41,7 +37,7 @@ function App() {
         style={styles.image}
       />
       <View style={styles.phraseView}>
-        <Text style={styles.phrase} > {isOpened ? `"${allPhrases[randomNumber]}"` : ""} </Text>
+        <Text style={styles.phrase} > {isOpened ? `"${allPhrases[randomNumber]?.text}"` : ""} </Text>
       </View>
 
       <TouchableOpacity
@@ -75,14 +71,13 @@ const styles = StyleSheet.create({
     height: 230
   },
   phraseView: {
-    height: 130,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    margin: 30,
   },
   phrase: {
     color: '#dd7b22',
     fontStyle: 'italic',
     fontSize: 20,
-    margin: 30,
     textAlign: 'center'
   },
   button: {
