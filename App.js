@@ -8,8 +8,8 @@ function App() {
   const [allPhrases, setAllPhrases] = useState([])
 
   useEffect(() => {
-    (async () => {
-      await fetch('https://type.fit/api/quotes')
+    (() => {
+      fetch('https://type.fit/api/quotes')
         .then(res => res.json())
         .then(res => setAllPhrases(res))
         .catch(err => console.log(err))
